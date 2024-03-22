@@ -3,9 +3,10 @@ import {useForm} from "@mantine/form";
 import {notifications} from "@mantine/notifications";
 import {useHeadscaleApiKeyStore} from "../hooks/useHeadscaleApiKeyStore.jsx";
 import {useHeadscaleUrlStore} from "../hooks/useHeadscaleUrlStore.jsx";
+import {verifyApiKey} from "../services/api.js";
 
 export default function LoginForm() {
-	const {headscaleUrl, setHeadscaleUrl} = useHeadscaleUrlStore()
+    const {headscaleUrl, setHeadscaleUrl} = useHeadscaleUrlStore()
     const {headscaleApiKey, setHeadscaleApiKey} = useHeadscaleApiKeyStore()
 
     const form = useForm({
@@ -14,19 +15,14 @@ export default function LoginForm() {
             headscaleApiKey: headscaleApiKey,
         },
     });
+    
 
-    function verifyApiKey(url, apikey) {
-        fetch(url + "/api/v1/apikey", {
-            method: "GET",
-            headers: {
-                Authorization: "Bearer " + apikey,
-                Accept: "application/json",
-            },
-        })
+    function onSubmit(values) {
+        verifyApiKey(values.headscaleUrl, values.headscaleApiKey)
             .then((response) => {
                 if (response.ok) {
-                    setHeadscaleApiKey(apikey)
-                    setHeadscaleUrl(url)
+                    setHeadscaleApiKey(values.headscaleApiKey)
+                    setHeadscaleUrl(values.headscaleUrl)
 
                     notifications.show({
                         color: "green",
@@ -57,7 +53,7 @@ export default function LoginForm() {
         <Box className={"w-1/3"}>
             <form
                 onSubmit={form.onSubmit((values) =>
-                    verifyApiKey(values.headscaleUrl, values.headscaleApiKey)
+                    onSubmit(values)
                 )}
             >
                 <TextInput
