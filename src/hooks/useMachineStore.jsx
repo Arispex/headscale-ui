@@ -78,6 +78,25 @@ export const useMachineStore = create(
                         if (onError) onError(error);
                     }
                 },
+                renameMachine: async (machineId, newName, onSuccess, onFailure, onError) => {
+                    try {
+                        const response = await fetch(headscaleUrl + "/api/v1/machine/" + machineId + "/rename/" + newName, {
+                                method: "POST",
+                                headers: {
+                                    Accept: "application/json",
+                                    Authorization: "Bearer " + headscaleApiKey,
+                                },
+                            }
+                        )
+                        if (response.ok) {
+                            if (onSuccess) onSuccess(response);
+                        } else {
+                            if (onFailure) onFailure(response);
+                        }
+                    } catch (error) {
+                        if (onError) onError(error);
+                    }
+                }
             }
         )
     }

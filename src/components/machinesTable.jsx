@@ -22,7 +22,7 @@ export default function MachinesTable() {
             </Table.Thead>
             <Table.Tbody>
                 {filteredMachines().map((machine) => (
-                    <MachinesTableItem id={machine.id} name={machine.name} createdAt={machine.createdAt}
+                    <MachinesTableItem id={machine.id} name={machine.name} givenName={machine.givenName} createdAt={machine.createdAt}
                                        key={machine.id}></MachinesTableItem>
                 ))}
             </Table.Tbody>

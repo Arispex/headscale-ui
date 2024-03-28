@@ -1,5 +1,4 @@
 import React from "react";
-import {useUserStore} from "../hooks/useUserStore.jsx";
 import {useForm} from "@mantine/form";
 import {notifications} from "@mantine/notifications";
 import {Button, Group, Popover, Stack, Table, Text, TextInput, Tooltip} from "@mantine/core";
@@ -9,8 +8,8 @@ import {useMachineStore} from "../hooks/useMachineStore.jsx";
 export default function MachinesTableItem(props) {
     const [isDeletePopoverOpened, setIsDeletePopoverOpened] = React.useState(false)
     const [isRenamePopoverOpened, setIsRenamePopoverOpened] = React.useState(false)
-    const {deleteMachine, fetchMachines} = useMachineStore()
-    const renameUserPopoverForm = useForm({
+    const {deleteMachine, fetchMachines, renameMachine} = useMachineStore()
+    const renamePopoverForm = useForm({
         initialValues: {
             newName: ""
         }
@@ -46,39 +45,38 @@ export default function MachinesTableItem(props) {
         setIsDeletePopoverOpened(!isDeletePopoverOpened)
     }
 
-    async function onRenameUserPopoverFormSubmit(name, values) {
-        // await renameUser(name, values.newName, async () => {
-        //     notifications.show({
-        //         title: "User renamed",
-        //         message: "User renamed successfully",
-        //         color: "green"
-        //     })
-        //     await fetchUsers()
-        // }, async (response) => {
-        //     if (response.status === 500) {
-        //         notifications.show({
-        //             title: "User not renamed",
-        //             message: (await response.json()).message,
-        //             color: "red"
-        //         })
-        //     } else {
-        //         window.location.href = "/"
-        //     }
-        // }, (error) => {
-        //     notifications.show({
-        //         title: "User not renamed",
-        //         message: error.message,
-        //         color: "red"
-        //     })
-        // })
-        // setIsRenamePopoverOpened(!isRenamePopoverOpened)
-        return undefined
+    async function onRenamePopoverFormSubmit(machineId, values) {
+        await renameMachine(machineId, values.newName, async () => {
+            notifications.show({
+                title: "Machine renamed",
+                message: "Machine renamed successfully",
+                color: "green"
+            })
+            await fetchMachines()
+        }, async (response) => {
+            if (response.status === 500) {
+                notifications.show({
+                    title: "Machine not renamed",
+                    message: (await response.json()).message,
+                    color: "red"
+                })
+            } else {
+                window.location.href = "/"
+            }
+        }, (error) => {
+            notifications.show({
+                title: "Machine not renamed",
+                message: error.message,
+                color: "red"
+            })
+        })
+        setIsRenamePopoverOpened(!isRenamePopoverOpened)
     }
 
     return (
         <Table.Tr key={props.id}>
             <Table.Td>{props.id}</Table.Td>
-            <Table.Td>{props.name}</Table.Td>
+            <Table.Td>{props.givenName + "(" + props.name + ")"}</Table.Td>
             <Table.Td>{props.createdAt}</Table.Td>
             <Table.Td>
                 <Group gap={"md"}>
@@ -108,9 +106,10 @@ export default function MachinesTableItem(props) {
                         </Popover.Target>
                         <Popover.Dropdown>
                             <form
-                                onSubmit={renameUserPopoverForm.onSubmit((values) => onRenameUserPopoverFormSubmit(props.name, values))}>
+                                onSubmit={renamePopoverForm.onSubmit((values) => onRenamePopoverFormSubmit(props.id, values))}>
                                 <Stack>
-                                    <TextInput label={"New Name"} {...renameUserPopoverForm.getInputProps("newName")}></TextInput>
+                                    <TextInput
+                                        label={"New Name"} {...renamePopoverForm.getInputProps("newName")}></TextInput>
                                     <Group>
                                         <Button type={"submit"}>Rename</Button>
                                         <Button
