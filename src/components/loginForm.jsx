@@ -1,9 +1,10 @@
-import {Box, Button, Group, TextInput} from "@mantine/core";
+import {Box, Button, Group, PasswordInput, TextInput} from "@mantine/core";
 import {useForm} from "@mantine/form";
 import {notifications} from "@mantine/notifications";
 import {useHeadscaleApiKeyStore} from "../hooks/useHeadscaleApiKeyStore.jsx";
 import {useHeadscaleUrlStore} from "../hooks/useHeadscaleUrlStore.jsx";
 import {verifyApiKey} from "../services/api.js";
+import React from "react";
 
 export default function LoginForm() {
     const {headscaleUrl, setHeadscaleUrl} = useHeadscaleUrlStore()
@@ -15,7 +16,7 @@ export default function LoginForm() {
             headscaleApiKey: headscaleApiKey,
         },
     });
-    
+
 
     function onSubmit(values) {
         verifyApiKey(values.headscaleUrl, values.headscaleApiKey)
@@ -27,6 +28,7 @@ export default function LoginForm() {
                     notifications.show({
                         color: "green",
                         title: "Verification successful",
+                        message: "Redirecting to dashboard",
                     });
 
                     setTimeout(() => {
@@ -50,28 +52,26 @@ export default function LoginForm() {
     }
 
     return (
-        <Box className={"w-1/3"}>
-            <form
-                onSubmit={form.onSubmit((values) =>
-                    onSubmit(values)
-                )}
-            >
-                <TextInput
-                    label="Headscale URL"
-                    mt={"md"}
-                    {...form.getInputProps("headscaleUrl")}
-                />
-                <TextInput
-                    label="Headscale API Key"
-                    mt={"md"}
-                    {...form.getInputProps("headscaleApiKey")}
-                />
-                <Group mt={"xl"} justify={"center"}>
-                    <Button type="submit" fullWidth>
-                        Login
-                    </Button>
-                </Group>
-            </form>
-        </Box>
+        <form
+            onSubmit={form.onSubmit((values) =>
+                onSubmit(values)
+            )}
+        >
+            <TextInput
+                label="Headscale URL"
+                mt={"md"}
+                {...form.getInputProps("headscaleUrl")}
+            />
+            <PasswordInput
+                label="Headscale API Key"
+                mt={"md"}
+                {...form.getInputProps("headscaleApiKey")}
+            />
+            <Group mt={"xl"} justify={"center"}>
+                <Button type="submit" fullWidth>
+                    Login
+                </Button>
+            </Group>
+        </form>
     );
 }

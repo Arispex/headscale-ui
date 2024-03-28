@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "jsx": "react",
+    "target": "es2016",
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": false,
+    "skipLibCheck": true,
+    "allowJs": true,
+    "checkJs": true
+  },
+  "include": [
+    "src/**/*.js", // 包含 src 文件夹下所有的 .ts 文件
+    "src/**/*.jsx", // 包含 src 文件夹下所有的 .tsx 文件
+    "src/**/*.ts", // 包含 src 文件夹下所有的 .ts 文件
+    "src/**/*.tsx" // 包含 src 文件夹下所有的 .tsx 文件
+  ]
+}
