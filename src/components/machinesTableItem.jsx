@@ -2,19 +2,26 @@ import React from "react";
 import {useForm} from "@mantine/form";
 import {notifications} from "@mantine/notifications";
 import {Badge, Button, Group, Modal, Popover, Stack, Table, Text, TextInput, Tooltip} from "@mantine/core";
-import {IconInfoCircle, IconPencilMinus, IconX} from "@tabler/icons-react";
+import {IconInfoCircle, IconPencilMinus, IconTag, IconX} from "@tabler/icons-react";
 import {useMachineStore} from "../hooks/useMachineStore.jsx";
 import {useDisclosure} from "@mantine/hooks";
 
 export default function MachinesTableItem(props) {
     const [isDeletePopoverOpened, setIsDeletePopoverOpened] = React.useState(false)
     const [isRenamePopoverOpened, setIsRenamePopoverOpened] = React.useState(false)
-    const {deleteMachine, fetchMachines, renameMachine} = useMachineStore()
+    const [isAddTagPopoverOpened, setIsAddTagPopoverOpened] = React.useState(false)
+    const {deleteMachine, fetchMachines, renameMachine, addTag} = useMachineStore()
     const renamePopoverForm = useForm({
         initialValues: {
             newName: ""
         }
     })
+    const addTagPopoverForm = useForm({
+        initialValues: {
+            newTag: ""
+        }
+    })
+    
     const [isMoreInfoModalOpened, {open: openMoreInfoModal, close: closeMoreInfoModal}] = useDisclosure()
 
     async function onDeleteButtonClick(machineId) {
@@ -73,6 +80,34 @@ export default function MachinesTableItem(props) {
             })
         })
         setIsRenamePopoverOpened(!isRenamePopoverOpened)
+    }
+    
+    async function onAddTagPopoverFormSubmit(machineId, currentTags, values) {
+        await addTag(machineId, currentTags, values.newTag, async () => {
+            notifications.show({
+                title: "Tag added",
+                message: "Tag added successfully",
+                color: "green"
+            })
+            await fetchMachines()
+        }, async (response) => {
+            if (response.status === 400) {
+                notifications.show({
+                    title: "Tag not added",
+                    message: (await response.json()).message,
+                    color: "red"
+                })
+            } else {
+                window.location.href = "/"
+            }
+        }, (error) => {
+            notifications.show({
+                title: "Tag not added",
+                message: error.message,
+                color: "red"
+            })
+        })
+        setIsAddTagPopoverOpened(!isAddTagPopoverOpened)
     }
 
     return (
@@ -186,6 +221,27 @@ export default function MachinesTableItem(props) {
                             </Group>
                         </Stack>
                     </Modal>
+                    <Popover opened={isAddTagPopoverOpened}>
+                        <Popover.Target>
+                            <Tooltip label={"Add Tag"}>
+                                <IconTag onClick={() => setIsAddTagPopoverOpened(!isAddTagPopoverOpened)}></IconTag>
+                            </Tooltip>
+                        </Popover.Target>
+                        <Popover.Dropdown>
+                            <form
+                                onSubmit={addTagPopoverForm.onSubmit((values) => onAddTagPopoverFormSubmit(props.data.id, props.data.forcedTags, values))}>
+                                <Stack>
+                                    <TextInput
+                                        label={"Add Tag"} {...addTagPopoverForm.getInputProps("newTag")}></TextInput>
+                                    <Group>
+                                        <Button type={"submit"}>Add</Button>
+                                        <Button
+                                            onClick={() => setIsAddTagPopoverOpened(!isAddTagPopoverOpened)}>Cancel</Button>
+                                    </Group>
+                                </Stack>
+                            </form>
+                        </Popover.Dropdown>
+                    </Popover>
                 </Group>
             </Table.Td>
         </Table.Tr>

@@ -96,6 +96,26 @@ export const useMachineStore = create(
                     } catch (error) {
                         if (onError) onError(error);
                     }
+                },
+                addTag: async (machineId, currentTags, newTag, onSuccess, onFailure, onError) => {
+                    try {
+                        const response = await fetch(headscaleUrl + "/api/v1/machine/" + machineId + "/tags", {
+                                method: "POST",
+                                headers: {
+                                    Accept: "application/json",
+                                    Authorization: "Bearer " + headscaleApiKey,
+                                },
+                                body: JSON.stringify({tags: [...currentTags, "tag:" + newTag]})
+                            }
+                        )
+                        if (response.ok) {
+                            if (onSuccess) onSuccess(response);
+                        } else {
+                            if (onFailure) onFailure(response);
+                        }
+                    } catch (error) {
+                        if (onError) onError(error);
+                    }
                 }
             }
         )
