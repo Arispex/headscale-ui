@@ -17,7 +17,7 @@ export default function UsersTable() {
                     <Table.Th>Id</Table.Th>
                     <Table.Th>Name</Table.Th>
                     <Table.Th>Created At</Table.Th>
-                    <Table.Th>Operation</Table.Th>
+                    <Table.Th>Action</Table.Th>
                 </Table.Tr>
             </Table.Thead>
             <Table.Tbody>

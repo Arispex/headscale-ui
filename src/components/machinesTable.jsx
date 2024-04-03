@@ -19,7 +19,7 @@ export default function MachinesTable() {
                     <Table.Th>Created At</Table.Th>
                     <Table.Th>Tags</Table.Th>
                     <Table.Th>Status</Table.Th>
-                    <Table.Th>Operation</Table.Th>
+                    <Table.Th>Action</Table.Th>
                 </Table.Tr>
             </Table.Thead>
             <Table.Tbody>
