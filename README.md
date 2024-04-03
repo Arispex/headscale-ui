@@ -2,6 +2,8 @@
 
 Headscale-UI is a web interface for Headscale, crafted using React and Material UI.
 
+![](screenshot.png)
+
 ## Installation
 
 Currently, this project is deployed as a static site. Download the pre-built `headscale-ui` package from [Actions](https://github.com/Arispex/headscale-ui/actions). It can be hosted using any preferred web server, such as Caddy, Nginx, or Apache.
