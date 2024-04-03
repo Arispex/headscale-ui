@@ -1,8 +1,29 @@
-# React + Vite
+# Headscale-UI
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Headscale-UI is a web interface for Headscale, crafted using React and Material UI.
 
-Currently, two official plugins are available:
+## Installation
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Currently, this project is deployed as a static site. Download the pre-built `headscale-ui` package from [Actions](https://github.com/Arispex/headscale-ui/actions). It can be hosted using any preferred web server, such as Caddy, Nginx, or Apache.
+
+### Example Configuration for Caddy
+
+```
+:6213 {
+    handle /api* {
+        reverse_proxy http://localhost:8080 {
+            header_up Host {http.reverse_proxy.upstream.hostport}
+        }
+    }
+
+    handle {
+        root * /root/headscale-ui
+        try_files {path} /index.html
+        file_server
+    }
+}
+```
+
+Replace `/root/headscale-ui` with your headscale-ui directory path.
+
+Replace `http://localhost:8080` with your Headscale server address.
