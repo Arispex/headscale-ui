@@ -7,7 +7,10 @@ export default function UsersTable() {
     const {filteredUsers, fetchUsers} = useUserStore();
 
     useEffect(() => {
-        fetchUsers();
+        fetchUsers(() => {
+        }, () => {
+            window.location.href = "/"
+        });
     }, []);
     
     return (
@@ -22,7 +25,8 @@ export default function UsersTable() {
             </Table.Thead>
             <Table.Tbody>
                 {filteredUsers().map((user) => (
-                    <UsersTableItem id={user.id} name={user.name} createdAt={user.createdAt} key={user.id}></UsersTableItem>
+                    <UsersTableItem id={user.id} name={user.name} createdAt={user.createdAt}
+                                    key={user.id}></UsersTableItem>
                 ))}
             </Table.Tbody>
         </Table>

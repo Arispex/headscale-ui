@@ -6,8 +6,11 @@ import MachinesTableItem from "./machinesTableItem.jsx";
 export default function MachinesTable() {
     const {filteredMachines, fetchMachines} = useMachineStore();
 
-    useEffect( () => {
-        fetchMachines();
+    useEffect(() => {
+        fetchMachines(() => {
+        }, () => {
+            window.location.href = "/"
+        });
     }, []);
 
     return (
@@ -24,7 +27,7 @@ export default function MachinesTable() {
             </Table.Thead>
             <Table.Tbody>
                 {filteredMachines().map((machine) => (
-                    <MachinesTableItem data={machine}></MachinesTableItem>
+                    <MachinesTableItem data={machine} key={machine.name}></MachinesTableItem>
                 ))}
             </Table.Tbody>
         </Table>
