@@ -221,7 +221,7 @@ export default function MachinesTableItem(props) {
                             </Group>
                         </Stack>
                     </Modal>
-                    <Popover opened={isAddTagPopoverOpened}>
+                    <Popover opened={isAddTagPopoverOpened} withArrow>
                         <Popover.Target>
                             <Tooltip label={"Add Tag"}>
                                 <IconTag onClick={() => setIsAddTagPopoverOpened(!isAddTagPopoverOpened)}></IconTag>
@@ -233,7 +233,7 @@ export default function MachinesTableItem(props) {
                                 <Stack>
                                     <TextInput
                                         label={"Add Tag"} {...addTagPopoverForm.getInputProps("newTag")}></TextInput>
-                                    <Group>
+                                    <Group justify={"space-between"}>
                                         <Button type={"submit"}>Add</Button>
                                         <Button
                                             onClick={() => setIsAddTagPopoverOpened(!isAddTagPopoverOpened)}>Cancel</Button>
