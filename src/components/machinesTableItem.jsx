@@ -148,7 +148,13 @@ export default function MachinesTableItem(props) {
         <Table.Tr>
             <Table.Td>{props.data.id}</Table.Td>
             <Table.Td>{props.data.givenName + "(" + props.data.name + ")"}</Table.Td>
-            <Table.Td>{props.data.createdAt}</Table.Td>
+            <Table.Td>
+                <Stack gap={"xs"}>
+                    {props.data.ipAddresses.map((ipAddress) => (
+                        <span key={ipAddress}>{ipAddress}</span>
+                    ))}
+                </Stack>
+            </Table.Td>
             <Table.Td>
                 <Group>
                     {props.data.forcedTags.map((tag) => (<Badge key={tag}>{tag.slice(4)}</Badge>))}
@@ -214,12 +220,8 @@ export default function MachinesTableItem(props) {
                                 <span>{props.data.discoKey}</span>
                             </Group>
                             <Group justify={"space-between"}>
-                                <span className={"font-bold"}>IP Addresses</span>
-                                <Stack gap={"xs"}>
-                                    {props.data.ipAddresses.map((ipAddress) => (
-                                        <span key={ipAddress}>{ipAddress}</span>
-                                    ))}
-                                </Stack>
+                                <span className={"font-bold"}>Created At</span>
+                                <span>{props.data.createdAt}</span>
                             </Group>
                             <Group justify={"space-between"}>
                                 <span className={"font-bold"}>Name</span>

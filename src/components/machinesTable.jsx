@@ -19,7 +19,7 @@ export default function MachinesTable() {
                 <Table.Tr>
                     <Table.Th>Id</Table.Th>
                     <Table.Th>Name</Table.Th>
-                    <Table.Th>Created At</Table.Th>
+                    <Table.Th>IP Addresses</Table.Th>
                     <Table.Th>Tags</Table.Th>
                     <Table.Th>Status</Table.Th>
                     <Table.Th>Action</Table.Th>
