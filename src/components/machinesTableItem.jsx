@@ -1,8 +1,8 @@
 import React from "react";
 import {useForm} from "@mantine/form";
 import {notifications} from "@mantine/notifications";
-import {Badge, Button, Group, Modal, Popover, Stack, Table, Text, TextInput, Tooltip} from "@mantine/core";
-import {IconInfoCircle, IconPencilMinus, IconTag, IconX} from "@tabler/icons-react";
+import {Badge, Button, Group, Modal, Popover, Select, Stack, Table, Text, TextInput, Tooltip} from "@mantine/core";
+import {IconInfoCircle, IconPencilMinus, IconTag, IconTagsOff, IconX} from "@tabler/icons-react";
 import {useMachineStore} from "../hooks/useMachineStore.jsx";
 import {useDisclosure} from "@mantine/hooks";
 
@@ -10,7 +10,7 @@ export default function MachinesTableItem(props) {
     const [isDeletePopoverOpened, setIsDeletePopoverOpened] = React.useState(false)
     const [isRenamePopoverOpened, setIsRenamePopoverOpened] = React.useState(false)
     const [isAddTagPopoverOpened, setIsAddTagPopoverOpened] = React.useState(false)
-    const {deleteMachine, fetchMachines, renameMachine, addTag} = useMachineStore()
+    const {deleteMachine, fetchMachines, renameMachine, addTag, removeTag} = useMachineStore()
     const renamePopoverForm = useForm({
         initialValues: {
             newName: ""
@@ -21,6 +21,12 @@ export default function MachinesTableItem(props) {
             newTag: ""
         }
     })
+    const removeTagModalForm = useForm({
+        initialValues: {
+            tagToRemove: ""
+        }
+    })
+    const [removeTagModalOpened, {open: openRemoveTagModal, close: closeRemoveTagModal}] = useDisclosure()
     
     const [isMoreInfoModalOpened, {open: openMoreInfoModal, close: closeMoreInfoModal}] = useDisclosure()
 
@@ -109,15 +115,43 @@ export default function MachinesTableItem(props) {
         })
         setIsAddTagPopoverOpened(!isAddTagPopoverOpened)
     }
+    
+    async function onRemoveTagModalFormSubmit(machineId, currentTags, values) {
+        await removeTag(machineId, currentTags, values.tagToRemove, async () => {
+            notifications.show({
+                title: "Tag removed",
+                message: "Tag removed successfully",
+                color: "green"
+            })
+            await fetchMachines()
+            closeRemoveTagModal()
+        }, async (response) => {
+            if (response.status === 400) {
+                notifications.show({
+                    title: "Tag not removed",
+                    message: (await response.json()).message,
+                    color: "red"
+                })
+            } else {
+                window.location.href = "/"
+            }
+        }, (error) => {
+            notifications.show({
+                title: "Tag not removed",
+                message: error.message,
+                color: "red"
+            })
+        })
+    }
 
     return (
-        <Table.Tr key={props.data.id}>
+        <Table.Tr>
             <Table.Td>{props.data.id}</Table.Td>
             <Table.Td>{props.data.givenName + "(" + props.data.name + ")"}</Table.Td>
             <Table.Td>{props.data.createdAt}</Table.Td>
             <Table.Td>
                 <Group>
-                    {props.data.forcedTags.map((tag) => (<Badge>{tag.slice(4)}</Badge>))}
+                    {props.data.forcedTags.map((tag) => (<Badge key={tag}>{tag.slice(4)}</Badge>))}
                 </Group>
             </Table.Td>
             <Table.Td>{props.data.online ? <Badge color={"green"}>Online</Badge> : <Badge color={"red"}>Offline</Badge>}</Table.Td>
@@ -221,7 +255,7 @@ export default function MachinesTableItem(props) {
                             </Group>
                         </Stack>
                     </Modal>
-                    <Popover opened={isAddTagPopoverOpened} withArrow>
+                    <Popover opened={isAddTagPopoverOpened} withArrow onChange={setIsAddTagPopoverOpened}>
                         <Popover.Target>
                             <Tooltip label={"Add Tag"}>
                                 <IconTag onClick={() => setIsAddTagPopoverOpened(!isAddTagPopoverOpened)}></IconTag>
@@ -242,6 +276,27 @@ export default function MachinesTableItem(props) {
                             </form>
                         </Popover.Dropdown>
                     </Popover>
+
+                    <Modal opened={removeTagModalOpened} onClose={closeRemoveTagModal} title={"Remove Tag"}>
+                        <form
+                            onSubmit={removeTagModalForm.onSubmit((values) => onRemoveTagModalFormSubmit(props.data.id, props.data.forcedTags, values))}>
+                            <Stack>
+                                <Select label={"Tag"}
+                                        data={props.data.forcedTags.map((tag) => tag.slice(4))} {...removeTagModalForm.getInputProps("tagToRemove")}></Select>
+                                <Group justify={"space-between"}>
+                                    <Button type={"submit"}>Remove</Button>
+                                    <Button
+                                        onClick={closeRemoveTagModal}>Cancel</Button>
+                                </Group>
+                            </Stack>
+                        </form>
+                    </Modal>
+
+
+                    <Tooltip label={"Remove Tag"}>
+                        <IconTagsOff
+                            onClick={openRemoveTagModal}></IconTagsOff>
+                    </Tooltip>
                 </Group>
             </Table.Td>
         </Table.Tr>
